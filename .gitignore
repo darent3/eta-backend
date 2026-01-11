@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+.Python
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+
+# Environment
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.iml
+workspace.xml
+
+# Docker
+*.dockerignore
