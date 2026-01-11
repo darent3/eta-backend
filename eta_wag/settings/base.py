@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from pathlib import Path
+import os
+import dj_database_url
+
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = PROJECT_DIR.parent
@@ -90,16 +93,31 @@ WSGI_APPLICATION = "eta_wag.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "eta_db",
-        "USER": "eta_user",
-        "PASSWORD": "$3cAy!147",  # Replace with YOUR PostgreSQL password
-        "HOST": "localhost",
-        "PORT": "5432",
+# Database
+# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+
+if os.environ.get('DATABASE_URL'):
+    # Production: Use Render PostgreSQL
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True
+        )
     }
-}
+else:
+    # Development: Use local PostgreSQL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'eta_db'),
+            'USER': os.environ.get('DB_USER', 'eta_user'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+        }
+    }
+
 
 
 # Password validation
