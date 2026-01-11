@@ -69,6 +69,17 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "eta_wag.urls"
 
+# Security settings - CSRF and Host verification
+ALLOWED_HOSTS = [
+    'eta-backend-django.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://eta-backend-django.onrender.com',
+]
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -89,9 +100,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "eta_wag.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -117,7 +125,6 @@ else:
             'PORT': os.environ.get('DB_PORT', '5432'),
         }
     }
-
 
 
 # Password validation
