@@ -9,25 +9,6 @@ class Document(models.Model):
     file = models.FileField(upload_to='documents/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     extracted_text = models.TextField(blank=True, null=True)
-    
-    # ===== NEW FIELDS FOR PLACEMENTS =====
-    description = models.TextField(
-        blank=True,
-        help_text="Brief description shown on frontend"
-    )
-    
-    priority = models.IntegerField(
-        default=0,
-        help_text="Higher numbers appear first"
-    )
-    
-    locations = models.ManyToManyField(
-        'DocumentLocation',
-        through='DocumentLocationAssignment',
-        blank=True,
-        help_text="Select where this document appears"
-    )
-    # ===== END NEW FIELDS =====
 
     search_fields = [
         index.SearchField('title', partial_match=True, boost=2),
@@ -124,74 +105,3 @@ class Newsletter(models.Model):
 
     class Meta:
         ordering = ['-subscribed_at']
-
-
-# ===== NEW MODELS FOR PLACEMENTS =====
-
-class DocumentLocation(models.Model):
-    """
-    The 6 fixed placement locations where documents can appear on frontend
-    """
-    
-    LOCATION_CHOICES = [
-        ('home_eta', 'Home_ETA'),
-        ('home_other', 'Home_Other'),
-        ('curious', 'Curious'),
-        ('analyst', 'Analyst'),
-        ('advocate', 'Advocate'),
-        ('resources', 'Resources'),
-    ]
-    
-    slug = models.CharField(
-        max_length=50,
-        unique=True,
-        choices=LOCATION_CHOICES,
-        help_text="Unique identifier for this placement"
-    )
-    
-    name = models.CharField(
-        max_length=100,
-        help_text="Display name"
-    )
-    
-    description = models.TextField(
-        blank=True,
-        help_text="Description of where this placement appears"
-    )
-    
-    def __str__(self):
-        return self.name
-    
-    class Meta:
-        verbose_name = "Document Location"
-        verbose_name_plural = "Document Locations"
-        ordering = ['name']
-
-
-class DocumentLocationAssignment(models.Model):
-    """
-    Connects documents to their placement locations (many-to-many)
-    """
-    
-    document = models.ForeignKey(
-        'Document',
-        on_delete=models.CASCADE,
-        related_name='location_assignments'
-    )
-    
-    location = models.ForeignKey(
-        DocumentLocation,
-        on_delete=models.CASCADE,
-        related_name='document_assignments'
-    )
-    
-    order = models.PositiveIntegerField(
-        default=0,
-        help_text="Order within this location (lower = appears first)"
-    )
-    
-    class Meta:
-        unique_together = ('document', 'location')
-        ordering = ['location', 'order']
-        verbose_name = "Document Location"
-        verbose_name_plural = "Document Locations"
